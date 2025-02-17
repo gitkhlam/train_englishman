@@ -1,4 +1,12 @@
 import { useState, useEffect } from "react";
+import ModeButton from './components/ModeButton';
+
+
+const CustomCard = ({ children }) => (
+  <div className="p-4 text-center">
+    {children}
+  </div>
+);
 
 const CustomButton = ({ onClick, children }) => (
   <button
@@ -9,19 +17,13 @@ const CustomButton = ({ onClick, children }) => (
   </button>
 );
 
-const CustomCard = ({ children }) => (
-  <div className="p-4 border rounded-lg shadow-md w-96 bg-white text-center">
-    {children}
-  </div>
-);
-
 const CustomInput = ({ value, onChange, placeholder }) => (
   <input
     type="text"
     value={value}
     onChange={onChange}
     placeholder={placeholder}
-    className="border p-2 rounded-lg w-full text-black placeholder-gray-500 outline-none"
+    className="border p-2 mb-4 rounded-lg w-full text-white placeholder-gray-500 outline-none"
   />
 );
 
@@ -39,6 +41,7 @@ export default function WordTrainer() {
   const [message, setMessage] = useState("");
   const [number, setNumber] = useState(0);
 
+
   useEffect(() => {
     setCurrentWord(wordsData[number]);
   }, [number]);
@@ -51,7 +54,7 @@ export default function WordTrainer() {
           setMessage("");
         //}
       }
-      const timer = setTimeout(() => clearMessage(), 1500);
+      const timer = setTimeout(() => clearMessage(), 1000);
       return () => clearTimeout(timer);
     }
   }, [message]);
@@ -59,7 +62,7 @@ export default function WordTrainer() {
 
   const handleCheckWord = () => {
     if (inputValue.toLowerCase().trim() === currentWord.word.toLowerCase()) {
-      setMessage("✅ Правильно!");
+      setMessage("Correct! ✅");
       //setNumber(n => n + 1 > wordsData.length - 1 ? 0 : n + 1);
       //setCurrentWord(w => w[number]);
     } else {
@@ -71,7 +74,7 @@ export default function WordTrainer() {
 
   const handleChooseWord = (word) => {
     if (word === currentWord.word) {
-      setMessage("✅ Правильно!");
+      setMessage("Correct! ✅");
       //setNumber(n => n + 1 > wordsData.length - 1 ? 0 : n + 1);
       setCurrentWord(wordsData[number]);
     } else {
@@ -93,42 +96,52 @@ export default function WordTrainer() {
   }; 
 
   return (
-    <div className="min-h-screen">
-      <div className="border border-amber-200 text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-[#d4d4d8] to-[#292828] bg-clip-text text-transparent leading-right">EnglishMan</div>
-      <h1 className="text-2xl font-bold">Тренажер слов</h1>
-      {!mode && (
-        <div className="flex gap-4">
-          <CustomButton onClick={() => setMode("input")}>Ввод вручную</CustomButton>
-          <CustomButton onClick={() => setMode("choice")}>Выбор из списка</CustomButton>
+    <div className="min-h-screen container">
+      <header className="flex justify-between items-center py-5 flex-wrap">
+        <div>
+          <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#d4d4d8] to-[#292828] bg-clip-text text-transparent cursor-pointer break-all inline-block transition-all duration-500 hover:translate-x-[1px] hover:translate-y-[1px] hover:[text-shadow:2px_2px_5px_rgba(255,160,160,0.3)]">
+            EnglishMan
+          </span>
         </div>
-      )}
-      {mode && currentWord && (
-        <CustomCard className="h-1">
-          <p className="text-xl text-black mb-4">{currentWord.translation}</p>
-          {mode === "input" ? (
-            <div>
-              <CustomInput className="border p-2 placeholder-black text-black"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Введите слово"
-              />
-              <CustomButton onClick={handleCheckWord} className="mt-2">Проверить</CustomButton>
-            </div>
-          ) : (
-            message === "" && (
-            <div className="grid grid-cols-2 gap-2">
-              {getRandomOptions().map((word) => (
-                <CustomButton key={word} onClick={() => handleChooseWord(word)}>
-                  {word}
-                </CustomButton>
-              ))}
-            </div> )
+        <div className="border">
+          some settings
+        </div>
+      </header>
+      <section className=" mt-20">
+        <div className="flex justify-center items-center gap-4 flex-wrap md:gap-12">
+          <ModeButton onClick={() => setMode("input")} isActive={mode === "input"}>Manual input ⌨</ModeButton>
+          <ModeButton onClick={() => setMode("choice")} isActive={mode === "choice"}>Choice Mode ✔️</ModeButton>
+        </div>
+        <div className="flex justify-center items-center mt-8">
+          {mode && currentWord && (
+            <CustomCard className="h-1">
+              <p className="text-xl text-white mb-4">{currentWord.translation}</p>
+              {mode === "input" ? (
+                <div>
+                  <CustomInput className="border p-2 placeholder-black text-black"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Введите слово"
+                  />
+                  <CustomButton onClick={handleCheckWord} className="mt-2">Проверить</CustomButton>
+                </div>
+              ) : (
+                message === "" && (
+                  <div className="grid grid-cols-2 gap-2">
+                    {getRandomOptions().map((word) => (
+                      <CustomButton key={word} onClick={() => handleChooseWord(word)}>
+                        {word}
+                      </CustomButton>
+                    ))}
+                  </div>)
+              )}
+              {message === "Correct! ✅" && (<p className="mt-2 text-2xl text-white">{currentWord.example}</p>)}
+              <p className="mt-2 mb-3 text-4xl font-semibold text-white">{message}</p>
+              <CustomButton className="mt-4" onClick={() => setMode(null)}>Назад</CustomButton>
+            </CustomCard>  
           )}
-          <p className="mt-2 text-sm text-gray-600">{currentWord.example}</p>
-          <p className="mt-2 font-semibold text-black">{message}</p>
-          <CustomButton className="mt-4" onClick={() => setMode(null)}>Назад</CustomButton>
-        </CustomCard>
-      )}
+        </div>
+      </section>
     </div>
   );
 }

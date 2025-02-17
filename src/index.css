@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply min-h-screen bg-gradient-to-t from-[#07071f]/90 via-[#0e0e3a] to-[#0b0b24];
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
